@@ -1,3 +1,4 @@
+import { Button } from "@mantine/core";
 import Head from "next/head";
 
 const Home = () => (
@@ -8,7 +9,7 @@ const Home = () => (
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <div />
+    <Button>a</Button>
   </>
 );
 

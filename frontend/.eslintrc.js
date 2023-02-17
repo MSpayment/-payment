@@ -22,6 +22,14 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
+  settings: {
+    "import/resolver": {
+      node: {
+        extensions: [".ts", ".tsx"],
+        moduleDirectory: ["./src", "node_modules"],
+      },
+    },
+  },
   plugins: [
     "import",
     "jsx-a11y",
@@ -99,5 +107,7 @@ module.exports = {
     "react/button-has-type": "off",
     camelcase: "off",
     "react/display-name": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/no-unresolved": "off",
   },
 };

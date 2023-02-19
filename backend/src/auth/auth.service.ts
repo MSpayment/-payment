@@ -20,13 +20,17 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(dto.password, 12);
 
     // DBに登録
-    const user = this.prisma.user.create({
-      data: {
-        email: dto.email,
-        hashedPassword,
-      },
-    });
-    return user;
+    try {
+      const user = this.prisma.user.create({
+        data: {
+          email: dto.email,
+          hashedPassword,
+        },
+      });
+      return user;
+    } catch (err) {
+      throw new ForbiddenException("同じユーザがあったよ、残念...");
+    }
   }
 
   // ログイン。アクセストークンを発行
@@ -55,17 +59,33 @@ export class AuthService {
     const refreshToken = await this.getRefreshToken(user.id, user.email);
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 12);
     // DBにリフレッシュトークンを登録
-    this.prisma.user.update({
-      data: { ...user, hashedRefreshToken },
-      where: {
-        id: user.id,
-      },
-    });
+    try {
+      await this.prisma.user.update({
+        data: { hashedRefreshToken },
+        where: {
+          id: user.id,
+        },
+      });
+    } catch (e) {
+      throw new ForbiddenException("なんてこったい");
+    }
+
     // アクセストークンを返す
     return this.getJwtAccessToken(user.id, user.email);
   }
 
   // logout() {}
+
+  // アクセストークンを更新
+  // async updateAccessToken(email: string, refreshTokenFromUser: string) {
+  //   // データベースからリフレッシュトークンを取得
+  //   const user = await this.prisma.user.findFirst({
+  //     where: {
+  //       email,
+  //     },
+  //   });
+  //   // リフレッシュトークンが正しいか
+  // }
 
   // アクセストークンを発行メソッド
   async getJwtAccessToken(userId: number, email: string): Promise<Token> {
@@ -80,7 +100,7 @@ export class AuthService {
       {
         // options: JetSignOptions
         expiresIn: "5m",
-        secret: this.cofig.get("JWR_ACCESS_SEQRET"),
+        secret: this.cofig.get("JWT_ACCESS_SEQRET"),
       }
     );
 
@@ -98,7 +118,7 @@ export class AuthService {
       {
         // options
         expiresIn: "7d", // リフレッシュトークンの有効期限は7日間
-        secret: this.cofig.get("JWT_REFRESH_SEQLET"),
+        secret: this.cofig.get("JWT_REFRESH_SEQRET"),
       }
     );
     return refreshToken;

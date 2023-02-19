@@ -41,7 +41,7 @@ export class AuthController {
       {
         // options
         httpOnly: true,
-        sameSite: "none",
+        sameSite: "lax",
         secure: false,
       }
     );
@@ -56,6 +56,7 @@ export class AuthController {
         secure: false,
       }
     );
+
     return "OK";
   }
 

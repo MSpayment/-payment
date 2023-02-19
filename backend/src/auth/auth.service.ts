@@ -100,7 +100,6 @@ export class AuthService {
       expiresIn: "5m",
       secret: this.cofig.get("JWT_ACCESS_SEQRET"),
     });
-    await console.log(accessToken);
     return accessToken;
   }
 

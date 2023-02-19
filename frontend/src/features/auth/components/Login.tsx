@@ -7,7 +7,9 @@ import {
   Anchor,
   Autocomplete,
 } from "@mantine/core";
-import React, { FC } from "react";
+import React, { FC, FormEvent } from "react";
+import { useAuth } from "src/features/auth/hooks/useMutateAuth";
+import { AuthSchema } from "src/features/auth/types";
 import { useAuthInput } from "src/store/input";
 
 export const Login: FC = () => {
@@ -15,6 +17,7 @@ export const Login: FC = () => {
   const password = useAuthInput((state) => state.password);
   const setEmail = useAuthInput((state) => state.setEmail);
   const setPassword = useAuthInput((state) => state.setPassword);
+  const { loginMutation } = useAuth();
 
   const data =
     email.trim().length > 0 && !email.includes("@")
@@ -22,6 +25,16 @@ export const Login: FC = () => {
           (provider) => `${email}@${provider}`
         )
       : [];
+
+  const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const validate = AuthSchema.parse({ email, password });
+      loginMutation.mutate(validate);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   return (
     <div
@@ -32,6 +45,7 @@ export const Login: FC = () => {
       className="min-h-[900px] bg-cover"
     >
       <Paper
+        onSubmit={submitHandler}
         component="form"
         className="min-h-[900px] max-w-full border-0 border-r border-r-blue-300 pt-20 md:max-w-md md:border-solid"
         radius={0}
@@ -56,7 +70,7 @@ export const Login: FC = () => {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
-        <Button fullWidth mt="xl" size="md">
+        <Button type="submit" fullWidth mt="xl" size="md">
           ログイン
         </Button>
         <Text align="center" mt="md">

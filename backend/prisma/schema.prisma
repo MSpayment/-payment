@@ -15,15 +15,15 @@ model User {
   id Int @id @default(autoincrement())
   email String @unique
   hashedPassword String
-  hashedRefreshToken String
+  hashedRefreshToken String?
   //Productと紐付け
-  product Product[]
+  products Product[]
 }
 model Product {
   id Int @id @default(autoincrement())
   name String
   price Int
-  boughtDay DateTime @db.Timestamp()
+  boughtDay DateTime 
   boughtSite String
   isPaid Boolean
   deleted Boolean
@@ -34,3 +34,4 @@ model Product {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@index([userId])
 }
+

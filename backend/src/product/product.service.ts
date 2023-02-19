@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RegisterProductDto } from "src/product/dto/RegisterProduct.dto";
-import { SearchProductsDto } from "src/product/dto/SearchProducts.dto";
+import { SearchProductsByTermDto } from "src/product/dto/SearchProducts.dto";
 import { UpdateProductDto } from "src/product/dto/UpdateProduct.dto";
 
 @Injectable()
@@ -9,7 +9,7 @@ export class ProductService {
   getProducts(userId: number) {}
 
   // 期間を指定して取得するメソッド
-  getProductsByTerm(userId: number, dto: SearchProductsDto) {}
+  getProductsByTerm(userId: number, dto: SearchProductsByTermDto) {}
 
   // idを指定して一つの製品を取得するメソッド
   getProductById(productId: number) {}

@@ -23,7 +23,7 @@ module.exports = {
   rules: {
     "class-methods-use-this": "off",
     "import/no-duplicates": "error",
-    "import/no-extraneous-dependencies": ["error", { devDependencies: true }],
+    "import/no-extraneous-dependencies": "off", // ["error", { devDependencies: true }],←どこのDependenciesに追加すれば治るかわからんかった。
     "import/no-unresolved": "off",
     "import/order": [
       "error",

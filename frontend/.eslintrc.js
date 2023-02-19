@@ -37,8 +37,10 @@ module.exports = {
     "react",
     "react-hooks",
     "@typescript-eslint",
+    "unused-imports",
   ],
   rules: {
+    "unused-imports/no-unused-imports": "error",
     "lines-between-class-members": [
       "error",
       "always",

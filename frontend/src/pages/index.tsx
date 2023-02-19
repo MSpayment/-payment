@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { Login } from "src/features/auth/components/Login";
 
 const Home = () => (
   <>
@@ -8,7 +9,11 @@ const Home = () => (
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <div />
+    <main className="h-screen min-h-screen">
+      <div className=" flex h-full w-full flex-col  justify-center">
+        <Login />
+      </div>
+    </main>
   </>
 );
 

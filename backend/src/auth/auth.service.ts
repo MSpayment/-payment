@@ -3,7 +3,6 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { AuthDto } from "src/auth/dto/auth.dto";
-import { Token } from "src/auth/interfaces/auth.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
@@ -76,35 +75,33 @@ export class AuthService {
 
   // logout() {}
 
-  // アクセストークンを更新
-  // async updateAccessToken(email: string, refreshTokenFromUser: string) {
-  //   // データベースからリフレッシュトークンを取得
-  //   const user = await this.prisma.user.findFirst({
-  //     where: {
-  //       email,
-  //     },
-  //   });
-  //   // リフレッシュトークンが正しいか
-  // }
+  アクセストークンを更新;
+
+  async updateAccessToken(email: string, refreshTokenFromUser: string) {
+    // データベースからリフレッシュトークンを取得
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    // リフレッシュトークンが正しいか
+  }
 
   // アクセストークンを発行メソッド
-  async getJwtAccessToken(userId: number, email: string): Promise<Token> {
-    const accessToken = await this.jwt.signAsync(
-      {
-        // payload: string|object|buffer 文字列にエンコードされて、JWTのペイロードセクションに使われる。
-        // payloadには任意の値が設定できる
-        email,
-        sub: userId, // sub: 認証の対象となるユーザの識別子を設定する。
-      },
-
-      {
-        // options: JetSignOptions
-        expiresIn: "5m",
-        secret: this.cofig.get("JWT_ACCESS_SEQRET"),
-      }
-    );
-
-    return { token: accessToken };
+  async getJwtAccessToken(userId: number, email: string): Promise<string> {
+    const payload = {
+      // payload: string|object|buffer 文字列にエンコードされて、JWTのペイロードセクションに使われる。
+      // payloadには任意の値が設定できる
+      email,
+      sub: userId, // sub: 認証の対象となるユーザの識別子を設定する。
+    };
+    const accessToken = await this.jwt.signAsync(payload, {
+      // options: JetSignOptions
+      expiresIn: "5m",
+      secret: this.cofig.get("JWT_ACCESS_SEQRET"),
+    });
+    await console.log(accessToken);
+    return accessToken;
   }
 
   // リフレッシュトークンを発行メソッド

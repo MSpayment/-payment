@@ -10,7 +10,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService, // データベースのテーブル操作をする
     private readonly jwt: JwtService, // アクセストークンを発行する
-    private readonly cofig: ConfigService // .envフィルから値を読み取る
+    private readonly config: ConfigService // .envフィルから値を読み取る
   ) {}
 
   // サインアップ。
@@ -55,7 +55,7 @@ export class AuthService {
     }
     // 問題なければ
     // リフレッシュトークンを発行
-    const refreshToken = await this.getRefreshToken(user.id, user.email);
+    const refreshToken = await this.getJwtRefreshToken(user.id, user.email);
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 12);
     // DBにリフレッシュトークンを登録
     try {
@@ -70,21 +70,18 @@ export class AuthService {
     }
 
     // アクセストークンを返す
-    return this.getJwtAccessToken(user.id, user.email);
+    const accessToken = await this.getJwtAccessToken(user.id, user.email);
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
   // logout() {}
 
-  アクセストークンを更新;
-
-  async updateAccessToken(email: string, refreshTokenFromUser: string) {
-    // データベースからリフレッシュトークンを取得
-    const user = await this.prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
-    // リフレッシュトークンが正しいか
+  // アクセストークンを更新;
+  async updateAccessToken(userId: number, email: string): Promise<string> {
+    return this.getJwtAccessToken(userId, email);
   }
 
   // アクセストークンを発行メソッド
@@ -98,13 +95,13 @@ export class AuthService {
     const accessToken = await this.jwt.signAsync(payload, {
       // options: JetSignOptions
       expiresIn: "5m",
-      secret: this.cofig.get("JWT_ACCESS_SEQRET"),
+      secret: this.config.get("JWT_ACCESS_SECRET"),
     });
     return accessToken;
   }
 
   // リフレッシュトークンを発行メソッド
-  async getRefreshToken(userId: number, email: string): Promise<string> {
+  async getJwtRefreshToken(userId: number, email: string): Promise<string> {
     const refreshToken = await this.jwt.signAsync(
       {
         // payload
@@ -114,7 +111,7 @@ export class AuthService {
       {
         // options
         expiresIn: "7d", // リフレッシュトークンの有効期限は7日間
-        secret: this.cofig.get("JWT_REFRESH_SEQRET"),
+        secret: this.config.get("JWT_REFRESH_SECRET"),
       }
     );
     return refreshToken;

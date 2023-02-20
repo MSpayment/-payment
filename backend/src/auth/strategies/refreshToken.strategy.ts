@@ -22,22 +22,26 @@ export class JwtRefreshStrategy extends PassportStrategy(
             let jwt = null;
             if (req && req.cookies) {
               jwt = req.cookies["refresh-token"];
+              console.log("redresh入った。", config.get("JWT_REFRESH_SECRET"));
             }
             return jwt;
           },
         ]),
-        secretOrKey: config.get("JWT_REFRESH_SEQRET"),
+        secretOrKey: config.get("JWT_REFRESH_SECRET"),
       }
     );
   }
 
   async validate(payload: { email: string; sub: number }) {
+    console.log("refreshこっちも入った。");
     const user = await this.prisma.user.findUnique({
       where: {
         id: payload.sub,
       },
     });
     delete user.hashedPassword;
+    delete user.hashedRefreshToken;
+
     return user;
   }
 }

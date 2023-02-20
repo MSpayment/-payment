@@ -13,3 +13,13 @@ export const useAuthInput = create<AuthInputState>((set) => ({
   setEmail: (email: string) => set({ email }),
   setPassword: (password: string) => set({ password }),
 }));
+
+type GlobalState = {
+  modal: boolean;
+  setModal: (modal: boolean) => void;
+};
+
+export const useGlobalState = create<GlobalState>((set) => ({
+  modal: false,
+  setModal: (modal: boolean) => set({ modal }),
+}));

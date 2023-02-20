@@ -1,37 +1,33 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  hashedPassword String
+  id                 Int       @id @default(autoincrement())
+  email              String    @unique
+  hashedPassword     String
   hashedRefreshToken String?
-  //Productと紐付け
-  products Product[]
-}
-model Product {
-  id Int @id @default(autoincrement())
-  name String
-  price Int
-  boughtDay DateTime 
-  boughtSite String
-  isPaid Boolean
-  deleted Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime 
-  //Userと紐付け
-  userId Int
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@index([userId])
+  products           Product[]
 }
 
+model Product {
+  id         Int      @id @default(autoincrement())
+  name       String
+  price      Int
+  boughtDay  String
+  boughtSite String
+  isPaid     Boolean @default(false)
+  deleted    Boolean @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

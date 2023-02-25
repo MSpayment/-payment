@@ -77,8 +77,6 @@ export class AuthController {
   guradtest_refreshToken(
     @Req() req: { user: Omit<User, "hashedPassword" & "hashedRefreshToken"> }
   ) {
-    console.log("id::::", req.user.id);
-    console.log("rarararararaarara");
     return `やったね！${req.user.id}`;
   }
 
@@ -123,7 +121,6 @@ export class AuthController {
         secure: false,
       }
     );
-    console.log(req.user.id, user, accessToken);
   }
 
   // Post ログアウト

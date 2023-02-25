@@ -1,27 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { Product } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
-import { RegisterProductDto } from "src/product/dto/RegisterProduct.dto";
+import { RegisterProductDto } from "src/products/dto/registerProduct.dto";
 
 @Injectable()
-export class ProductService {
+export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   // 今日の登録した製品を取得するメソッド
-  async getProducts(userId: number) {
-    const date: Date = new Date();
-    const year: string = date.getFullYear().toString();
-    const monthNum: number = date.getMonth() + 1;
-    let month = monthNum.toString();
-    if (month.length === 1) {
-      month = `0${month}`;
-    }
-    const todayMonth = `${year}-${month}`;
-
-    const products: Product[] = await this.prisma.product.findMany({
+  async getProducts(month) {
+    const products = await this.prisma.product.findMany({
       where: {
         boughtDay: {
-          contains: todayMonth,
+          contains: month,
         },
       },
     });
@@ -49,5 +39,26 @@ export class ProductService {
   // updateProduct(userId: number, productId: number, dto: UpdateProductDto) {}
 
   // // (idを指定して?）削除するメソッド
-  // deleteProduct(userId: number, productId: number) {}
+  deleteProduct(productId: number) {
+    const product = this.prisma.product.update({
+      data: {
+        deleted: true,
+      },
+      where: {
+        id: productId,
+      },
+    });
+    return product;
+  }
+
+  getTodayMonth(): string {
+    const date: Date = new Date();
+    const year: string = date.getFullYear().toString();
+    const monthNum: number = date.getMonth() + 1;
+    let month = monthNum.toString();
+    if (month.length === 1) {
+      month = `0${month}`;
+    }
+    return `${year}-${month}`;
+  }
 }

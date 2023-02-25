@@ -22,7 +22,6 @@ export class JwtAccessStrategy extends PassportStrategy(
             let jwt = null;
             if (req && req.cookies) {
               jwt = req.cookies["access-token"];
-              console.log("入った。", jwt);
             }
             return jwt;
           },
@@ -34,7 +33,6 @@ export class JwtAccessStrategy extends PassportStrategy(
 
   // ガードを通る時に呼ばれる
   async validate(payload: { email: string; sub: number }) {
-    console.log("こっちも入った。");
     const user = await this.prisma.user.findUnique({
       where: {
         id: payload.sub,

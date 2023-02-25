@@ -9,19 +9,19 @@ import { AuthModule } from "./auth/auth.module";
 import { AuthService } from "./auth/auth.service";
 import { PrismaModule } from "./prisma/prisma.module";
 import { PrismaService } from "./prisma/prisma.service";
-import { ProductController } from "./product/product.controller";
-import { ProductModule } from "./product/product.module";
-import { ProductService } from "./product/product.service";
+import { ProductsController } from "./products/products.controller";
+import { ProductsModule } from "./products/products.module";
+import { ProductsService } from "./products/products.service";
 
 @Module({
-  controllers: [AppController, ProductController, AuthController],
+  controllers: [AppController, ProductsController, AuthController],
   imports: [
-    ProductModule,
+    ProductsModule,
     AuthModule,
     PrismaModule,
     JwtModule.register({}),
     ConfigModule,
   ],
-  providers: [AppService, ProductService, AuthService, PrismaService],
+  providers: [AppService, ProductsService, AuthService, PrismaService],
 })
 export class AppModule {}

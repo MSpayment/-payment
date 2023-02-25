@@ -1,10 +1,10 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
-  Patch,
   Post,
   Req,
   Res,
@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { User } from "@prisma/client";
+import * as bycript from "bcrypt";
 import { Request, Response } from "express";
 import { AuthService } from "src/auth/auth.service";
 import { AuthDto } from "src/auth/dto/auth.dto";
@@ -81,31 +82,31 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard("jwt-refresh"))
-  @Patch("refresh")
+  @Post("refresh")
   async refresh(
     @Req()
     req: {
       cookies: any;
       user: Omit<User, "hashedPassword" & "hashedRefreshToken">;
     },
-    @Res() res: Response
+    @Res({ passthrough: true }) res: Response
   ) {
     // リフレッシュトークンをクッキーから取得
     const refreshToken = await req.cookies["refresh-token"];
+    // 一応DBに保存されているリフレッシュトークンと合っているかも確かめる。
     // DBに保存されているハッシュ化したリフレッシュトークンも取得
     const user = await this.prisma.user.findUnique({
       where: {
         id: req.user.id,
       },
     });
+    const { hashedRefreshToken } = user;
+    const isValid = await bycript.compare(refreshToken, hashedRefreshToken);
+    if (!isValid) {
+      throw new ForbiddenException("リフレッシュトークンが不正");
+    }
 
-    // const { hashedRefreshToken } = user;
-    // // const isValid = await bcrypt.compare(refreshToken, hashedRefreshToken);
-    // // if (!isValid) {
-    // //   throw new ForbiddenException("リフレッシュトークンが不正");
-    // // }
-
-    // 新しいアクセストークンを取得
+    // 問題なければ新しいアクセストークンを取得
     const accessToken = await this.authService.updateAccessToken(
       user.id,
       user.email
@@ -121,9 +122,13 @@ export class AuthController {
         secure: false,
       }
     );
+    return { message: "アクセストークンを更新したよ" };
   }
 
   // Post ログアウト
-  // @Post("logout")
-  // logout() {}
+  @Post("logout")
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie("access-token");
+    return { message: "ログアウトしたよ" };
+  }
 }

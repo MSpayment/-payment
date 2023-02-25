@@ -1,6 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
+import { Product } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { RegisterProductDto } from "src/products/dto/registerProduct.dto";
+import { UpdateProductDto } from "src/products/dto/updateProduct.dto";
 
 @Injectable()
 export class ProductsService {
@@ -35,8 +37,31 @@ export class ProductsService {
     return product;
   }
 
-  // // 登録した製品を更新するメソッド
-  // updateProduct(userId: number, productId: number, dto: UpdateProductDto) {}
+  // 登録した製品を更新するメソッド
+  async updateProduct(
+    productId: number,
+    dto: UpdateProductDto
+  ): Promise<Product> {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id: productId,
+      },
+    });
+    if (!product) {
+      throw new ForbiddenException("指定されたidのプロダクトがない!");
+    }
+    const result: Product = await this.prisma.product.update({
+      data: {
+        id: productId,
+        ...dto,
+        updatedAt: new Date(),
+      },
+      where: {
+        id: productId,
+      },
+    });
+    return result;
+  }
 
   // // (idを指定して?）削除するメソッド
   deleteProduct(productId: number) {

@@ -116,4 +116,25 @@ export class AuthService {
     );
     return refreshToken;
   }
+
+  async clearRefreshToken(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user) {
+      throw new ForbiddenException("指定されたidのユーザが存在しない");
+    }
+
+    const result = await this.prisma.user.update({
+      data: {
+        hashedRefreshToken: "",
+      },
+      where: {
+        id: userId,
+      },
+    });
+    return result;
+  }
 }

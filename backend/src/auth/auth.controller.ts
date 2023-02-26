@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   ForbiddenException,
-  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -64,23 +63,10 @@ export class AuthController {
       }
     );
 
-    return "OK";
+    return "ok";
   }
 
-  @UseGuards(AuthGuard("jwt-access"))
-  @Get("accessToken_test")
-  guradtest_accessToken() {
-    return "やったね！";
-  }
-
-  @UseGuards(AuthGuard("jwt-refresh"))
-  @Get("refreshToken_test")
-  guradtest_refreshToken(
-    @Req() req: { user: Omit<User, "hashedPassword" & "hashedRefreshToken"> }
-  ) {
-    return `やったね！${req.user.id}`;
-  }
-
+  // アクセストークン更新ルート
   @UseGuards(AuthGuard("jwt-refresh"))
   @Post("refresh")
   async refresh(
@@ -122,13 +108,18 @@ export class AuthController {
         secure: false,
       }
     );
-    return { message: "アクセストークンを更新したよ" };
+    return { message: "ok" };
   }
 
   // Post ログアウト
+  @UseGuards(AuthGuard("jwt-access"))
   @Post("logout")
-  logout(@Res({ passthrough: true }) res: Response) {
+  logout(
+    @Req() req: { user: Omit<User, "hashedPassword" & "hashedRefreshToken"> },
+    @Res({ passthrough: true }) res: Response
+  ) {
     res.clearCookie("access-token");
-    return { message: "ログアウトしたよ" };
+    this.authService.clearRefreshToken(req.user.id);
+    return { message: "ok" };
   }
 }

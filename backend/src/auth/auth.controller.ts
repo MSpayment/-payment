@@ -1,10 +1,9 @@
 import {
   Body,
   Controller,
-  Get,
+  ForbiddenException,
   HttpCode,
   HttpStatus,
-  Patch,
   Post,
   Req,
   Res,
@@ -12,6 +11,7 @@ import {
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { User } from "@prisma/client";
+import * as bycript from "bcrypt";
 import { Request, Response } from "express";
 import { AuthService } from "src/auth/auth.service";
 import { AuthDto } from "src/auth/dto/auth.dto";
@@ -63,49 +63,36 @@ export class AuthController {
       }
     );
 
-    return "OK";
+    return "ok";
   }
 
-  @UseGuards(AuthGuard("jwt-access"))
-  @Get("accessToken_test")
-  guradtest_accessToken() {
-    return "やったね！";
-  }
-
+  // アクセストークン更新ルート
   @UseGuards(AuthGuard("jwt-refresh"))
-  @Get("refreshToken_test")
-  guradtest_refreshToken(
-    @Req() req: { user: Omit<User, "hashedPassword" & "hashedRefreshToken"> }
-  ) {
-    return `やったね！${req.user.id}`;
-  }
-
-  @UseGuards(AuthGuard("jwt-refresh"))
-  @Patch("refresh")
+  @Post("refresh")
   async refresh(
     @Req()
     req: {
       cookies: any;
       user: Omit<User, "hashedPassword" & "hashedRefreshToken">;
     },
-    @Res() res: Response
+    @Res({ passthrough: true }) res: Response
   ) {
     // リフレッシュトークンをクッキーから取得
     const refreshToken = await req.cookies["refresh-token"];
+    // 一応DBに保存されているリフレッシュトークンと合っているかも確かめる。
     // DBに保存されているハッシュ化したリフレッシュトークンも取得
     const user = await this.prisma.user.findUnique({
       where: {
         id: req.user.id,
       },
     });
+    const { hashedRefreshToken } = user;
+    const isValid = await bycript.compare(refreshToken, hashedRefreshToken);
+    if (!isValid) {
+      throw new ForbiddenException("リフレッシュトークンが不正");
+    }
 
-    // const { hashedRefreshToken } = user;
-    // // const isValid = await bcrypt.compare(refreshToken, hashedRefreshToken);
-    // // if (!isValid) {
-    // //   throw new ForbiddenException("リフレッシュトークンが不正");
-    // // }
-
-    // 新しいアクセストークンを取得
+    // 問題なければ新しいアクセストークンを取得
     const accessToken = await this.authService.updateAccessToken(
       user.id,
       user.email
@@ -121,9 +108,18 @@ export class AuthController {
         secure: false,
       }
     );
+    return { message: "ok" };
   }
 
   // Post ログアウト
-  // @Post("logout")
-  // logout() {}
+  @UseGuards(AuthGuard("jwt-access"))
+  @Post("logout")
+  logout(
+    @Req() req: { user: Omit<User, "hashedPassword" & "hashedRefreshToken"> },
+    @Res({ passthrough: true }) res: Response
+  ) {
+    res.clearCookie("access-token");
+    this.authService.clearRefreshToken(req.user.id);
+    return { message: "ok" };
+  }
 }

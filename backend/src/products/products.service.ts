@@ -9,11 +9,12 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   // 今日の登録した製品を取得するメソッド
-  async getProducts(month: string = this.getTodayMonth()) {
+  async getProducts({ month, year } = this.getTodayMonth()) {
     const products = await this.prisma.product.findMany({
       where: {
         boughtDay: {
-          contains: month,
+          gte: new Date(year, month, 1),
+          lte: new Date(year, month, 0),
         },
       },
     });
@@ -76,14 +77,11 @@ export class ProductsService {
     return product;
   }
 
-  getTodayMonth(): string {
-    const date: Date = new Date();
-    const year: string = date.getFullYear().toString();
-    const monthNum: number = date.getMonth() + 1;
-    let month = monthNum.toString();
-    if (month.length === 1) {
-      month = `0${month}`;
-    }
-    return `${year}-${month}`;
+  getTodayMonth(): { month: number; year: number } {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+
+    return { month, year };
   }
 }

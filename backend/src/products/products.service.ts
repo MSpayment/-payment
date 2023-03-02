@@ -14,7 +14,7 @@ export class ProductsService {
       where: {
         boughtDay: {
           gte: new Date(year, month, 1),
-          lte: new Date(year, month, 0),
+          lte: new Date(year, month + 1, 0),
         },
       },
     });
@@ -80,7 +80,7 @@ export class ProductsService {
   getTodayMonth(): { month: number; year: number } {
     const date = new Date();
     const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+    const month = date.getMonth();
 
     return { month, year };
   }

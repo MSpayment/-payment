@@ -1,17 +1,26 @@
 import "../styles/tailwind.css";
 import type { AppProps } from "next/app";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Hydrate, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MantineProvider, Modal } from "@mantine/core";
 import queryClient from "src/libs/queryClient";
 import { useGlobalState } from "src/store/input";
 import { ModalContent } from "src/components/ModalContent";
+import axios from "src/libs/axios";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const [client] = useState(() => queryClient);
   const modal = useGlobalState((state) => state.modal);
   const setModal = useGlobalState((state) => state.setModal);
+  useEffect(() => {
+    (async () => {
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/auth/csrf`
+      );
+      axios.defaults.headers.common["csrf-token"] = data.csrfToken;
+    })();
+  }, []);
 
   return (
     <QueryClientProvider client={client}>

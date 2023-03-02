@@ -16,7 +16,6 @@ import { RegisterProductDto } from "src/products/dto/registerProduct.dto";
 import { UpdateProductDto } from "src/products/dto/updateProduct.dto";
 import { ProductsService } from "src/products/products.service";
 
-@UseGuards(AuthGuard("jwt-access"))
 @Controller("products")
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -39,6 +38,7 @@ export class ProductsController {
 
   // Get 期間を指定して登録した製品を取得
   // Post 購入した製品を登録
+  @UseGuards(AuthGuard("jwt-access"))
   @Post()
   registerProduct(
     @Req() req: { user: Omit<User, "hashedPassword" & "hashedRefreshToken"> },
@@ -48,6 +48,7 @@ export class ProductsController {
   }
 
   // Patch 登録した製品を編集 //支払い済みにする場合はbodyにisPaid: trueを付け足してリクエストを送る
+  @UseGuards(AuthGuard("jwt-access"))
   @Patch(":id")
   updateProduct(
     @Req() req: Request,
@@ -58,6 +59,7 @@ export class ProductsController {
   }
 
   // Delete 登録した製品を削除//delete=falseとすることで削除判定。DBからは消さない
+  @UseGuards(AuthGuard("jwt-access"))
   @Delete(":id")
   deleteProduct(@Param("id", ParseIntPipe) productId: number) {
     return this.productsService.deleteProduct(productId);

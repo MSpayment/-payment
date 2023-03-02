@@ -29,7 +29,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           <Modal
             opened={modal}
             onClose={() => setModal(false)}
-            title="登録してね！"
+            title="購入したものを入力"
             classNames={{
               title: "text-2xl font-bold mx-auto text-blue-500",
               overlay: "bg-gray-900 bg-opacity-50",

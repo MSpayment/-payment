@@ -8,9 +8,9 @@ const getProducts = async () => {
   return data;
 };
 
-export const useQueryProducts = () =>
+export const useQueryProducts = (month: number = new Date().getMonth() + 1) =>
   useQuery<Product[], Error>({
-    queryKey: ["products"],
+    queryKey: ["products", month],
     queryFn: getProducts,
     onSuccess: (data) => {
       console.log(data);

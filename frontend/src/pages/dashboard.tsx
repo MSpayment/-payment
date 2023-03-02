@@ -3,7 +3,17 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import { NextPage } from "next";
 import React from "react";
 import { useGlobalState } from "src/store/input";
-import { Products } from "src/features/products/components/Products";
+import dynamic from "next/dynamic";
+
+const DynamicProducts = dynamic(
+  () =>
+    import("src/features/products/components/Products").then(
+      (mod) => mod.Products
+    ),
+  {
+    ssr: false,
+  }
+);
 
 const Dashboard: NextPage = () => {
   const setModal = useGlobalState((state) => state.setModal);
@@ -12,7 +22,7 @@ const Dashboard: NextPage = () => {
     <div>
       <main className="min-h-screen">
         <div className="container mx-auto h-full min-h-screen ">
-          <Products />
+          <DynamicProducts />
         </div>
       </main>
       <ActionIcon

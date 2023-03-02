@@ -9,7 +9,7 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   // 今日の登録した製品を取得するメソッド
-  async getProducts(month) {
+  async getProducts(month: string = this.getTodayMonth()) {
     const products = await this.prisma.product.findMany({
       where: {
         boughtDay: {

@@ -16,7 +16,7 @@ export const useAuth = () => {
     },
     {
       onSuccess: (data) => {
-        if (data === "OK") {
+        if (data === "ok") {
           router.push("/dashboard");
         }
       },

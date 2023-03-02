@@ -6,7 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MantineProvider, Modal } from "@mantine/core";
 import queryClient from "src/libs/queryClient";
 import { useGlobalState } from "src/store/input";
-import { ModalContent } from "src/components/modalContent";
+import { ModalContent } from "src/components/ModalContent";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const [client] = useState(() => queryClient);

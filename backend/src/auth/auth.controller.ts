@@ -47,7 +47,7 @@ export class AuthController {
       {
         // options
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         secure: false,
       }
     );
@@ -58,7 +58,7 @@ export class AuthController {
       {
         // options
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         secure: false,
       }
     );
@@ -104,7 +104,7 @@ export class AuthController {
       {
         // options
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         secure: false,
       }
     );

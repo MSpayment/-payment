@@ -23,6 +23,7 @@ export class JwtAccessStrategy extends PassportStrategy(
             if (req && req.cookies) {
               jwt = req.cookies["access-token"];
             }
+
             return jwt;
           },
         ]),
@@ -38,6 +39,7 @@ export class JwtAccessStrategy extends PassportStrategy(
         id: payload.sub,
       },
     });
+
     delete user.hashedPassword;
     delete user.hashedRefreshToken;
     return user;

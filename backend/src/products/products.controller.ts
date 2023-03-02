@@ -24,8 +24,7 @@ export class ProductsController {
   // Get 全ての登録した製品を取得
   @Get()
   getProducts() {
-    const month = this.productsService.getTodayMonth();
-    return this.productsService.getProducts(month);
+    return this.productsService.getProducts();
   }
 
   // Get 全ての登録した製品を取得 //とりあえず、...products/23-02でリクエストを送ると、2023年の2月のデータが取得できる。

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   ForbiddenException,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -23,6 +24,11 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly prisma: PrismaService
   ) {}
+
+  @Get("csrf")
+  getCsrfToken(@Req() req: Request): Csrf {
+    return { csrfToken: req.csrfToken() };
+  }
 
   // Post サインアップ
   @Post("signup")

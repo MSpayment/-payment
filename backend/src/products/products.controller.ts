@@ -28,12 +28,13 @@ export class ProductsController {
   }
 
   // Get 全ての登録した製品を取得 //とりあえず、...products/23-02でリクエストを送ると、2023年の2月のデータが取得できる。
-  @Get(":month")
+  @Get(":year/:month")
   getProductsByMonth(
     @Req() req: { user: Omit<User, "hashedPassword" & "hashedRefreshToken"> },
-    @Param("month") month: string
+    @Param("month", ParseIntPipe) month: number,
+    @Param("year", ParseIntPipe) year: number
   ) {
-    return this.productsService.getProducts(month);
+    return this.productsService.getProducts({ month, year });
   }
 
   // Get 期間を指定して登録した製品を取得

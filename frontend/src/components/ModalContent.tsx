@@ -74,7 +74,7 @@ export const ModalContent: FC = () => {
           }}
           data={[
             { value: "amazon", label: "Amazon" },
-            { value: "mercari", label: "メルカリ" },
+            { value: "メルカリ", label: "メルカリ" },
             { value: "other", label: "その他" },
           ]}
           onChange={(event) => {

@@ -12,10 +12,14 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_ENDPOINT}/auth/csrf`
-      );
-      axios.defaults.headers.common["csrf-token"] = data.csrfToken;
+      try {
+        const { data } = await axios.get(
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/auth/csrf`
+        );
+        axios.defaults.headers.common["csrf-token"] = data.csrfToken;
+      } catch (error) {
+        console.error(error);
+      }
     })();
   }, []);
 

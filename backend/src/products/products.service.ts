@@ -11,6 +11,9 @@ export class ProductsService {
   // 今日の登録した製品を取得するメソッド
   async getProducts({ month, year } = this.getTodayMonth()) {
     const products = await this.prisma.product.findMany({
+      orderBy: {
+        boughtDay: "desc",
+      },
       where: {
         boughtDay: {
           gte: new Date(year, month, 1),
@@ -18,7 +21,24 @@ export class ProductsService {
         },
       },
     });
-    return products;
+    let productsEachDay = [];
+    let prevDay = 0;
+    let tmpObj = { day: 0, products: [] };
+
+    products.forEach((e) => {
+      const day = e.boughtDay.getDate();
+      if (day !== prevDay) {
+        // 日付が変わったら配列にオブジェクトを追加してtmpObjを初期化
+        productsEachDay = [tmpObj, ...productsEachDay];
+        tmpObj = { day, products: [] };
+      }
+      // console.log(e);
+      tmpObj.products = [e, ...tmpObj.products];
+      prevDay = day;
+    });
+    productsEachDay = [tmpObj, ...productsEachDay];
+    productsEachDay = productsEachDay.slice(0, -1);
+    return productsEachDay;
   }
 
   // 期間を指定して取得するメソッド

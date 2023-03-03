@@ -9,7 +9,9 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   // 今日の登録した製品を取得するメソッド
-  async getProducts({ month, year } = this.getTodayMonth()) {
+  async getProducts(
+    { month, year } = this.getTodayMonth()
+  ): Promise<[{ date: Date; products: any[] }]> {
     const products = await this.prisma.product.findMany({
       orderBy: {
         boughtDay: "desc",
@@ -21,23 +23,25 @@ export class ProductsService {
         },
       },
     });
-    let productsEachDay = [];
+
     let prevDate = new Date();
     let tmpObj = { date: prevDate, products: [] };
-
+    const productsEachDay: [{ date: Date; products: any[] }] = [
+      { date: prevDate, products: [] },
+    ];
     products.forEach((e) => {
       const date = e.boughtDay;
       if (date !== prevDate) {
         // 日付が変わったら配列にオブジェクトを追加してtmpObjを初期化
-        productsEachDay = [tmpObj, ...productsEachDay];
+        productsEachDay.push(tmpObj);
         tmpObj = { date, products: [] };
       }
       // console.log(e);
       tmpObj.products = [e, ...tmpObj.products];
       prevDate = date;
     });
-    productsEachDay = [tmpObj, ...productsEachDay];
-    productsEachDay = productsEachDay.slice(0, -1);
+    productsEachDay.push(tmpObj);
+    productsEachDay.pop();
     return productsEachDay;
   }
 

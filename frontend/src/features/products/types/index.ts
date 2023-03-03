@@ -8,3 +8,10 @@ export const InputProductSchema = z.object({
 });
 
 export type InputProduct = ReturnType<typeof InputProductSchema.parse>;
+
+export type UpdateChecked = {
+  id: number;
+  product: {
+    isPaid: boolean;
+  } & InputProduct;
+};

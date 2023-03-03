@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const ProductsItem: FC<Props> = ({ product }) => {
-  const { updateProductMutation } = useMutateProduct();
+  const { updateProductMutation, deleteProductMutation } = useMutateProduct();
 
   const handleIsPaidChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateProductMutation.mutate({
@@ -21,6 +21,13 @@ export const ProductsItem: FC<Props> = ({ product }) => {
         boughtDay: product.boughtDay,
         boughtSite: product.boughtSite,
       },
+    });
+  };
+
+  const deleteProductHandler = async () => {
+    await deleteProductMutation.mutateAsync({
+      id: product.id,
+      boughtDay: product.boughtDay,
     });
   };
 
@@ -46,7 +53,7 @@ export const ProductsItem: FC<Props> = ({ product }) => {
           <div className="flex justify-center space-x-4">
             <Checkbox onChange={handleIsPaidChange} checked={product.isPaid} />
             <Checkbox
-              onChange={() => console.log("a")}
+              onChange={deleteProductHandler}
               color="red"
               checked={product.deleted}
             />

@@ -15,3 +15,8 @@ export type UpdateChecked = {
     isPaid: boolean;
   } & InputProduct;
 };
+
+export type DeleteProduct = {
+  id: number;
+  boughtDay: Date;
+};

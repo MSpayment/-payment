@@ -11,10 +11,10 @@ export class ProductsService {
   // 今日の登録した製品を取得するメソッド
   async getProducts(
     { month, year } = this.getTodayMonth()
-  ): Promise<[{ date: Date; products: any[] }]> {
+  ): Promise<{ date: Date; id: number; products: Product[] }[]> {
     const products = await this.prisma.product.findMany({
       orderBy: {
-        boughtDay: "desc",
+        boughtDay: "asc",
       },
       where: {
         boughtDay: {
@@ -24,25 +24,32 @@ export class ProductsService {
       },
     });
 
-    let prevDate = new Date();
-    let tmpObj = { date: prevDate, products: [] };
-    const productsEachDay: [{ date: Date; products: any[] }] = [
-      { date: prevDate, products: [] },
-    ];
-    products.forEach((e) => {
-      const date = e.boughtDay;
-      if (date !== prevDate) {
-        // 日付が変わったら配列にオブジェクトを追加してtmpObjを初期化
-        productsEachDay.push(tmpObj);
-        tmpObj = { date, products: [] };
-      }
-      // console.log(e);
-      tmpObj.products = [e, ...tmpObj.products];
-      prevDate = date;
-    });
+    let count = 0;
+    let tmpObj: { date: Date; id: number; products: Product[] } | null;
+    const productsEachDay: { date: Date; id: number; products: Product[] }[] =
+      products.map((val, index) => {
+        if (!tmpObj) {
+          tmpObj = { date: val.boughtDay, id: 0, products: [val] };
+          count += 1;
+          return null;
+        }
+
+        if (
+          val.boughtDay.getDate() === tmpObj.date.getDate() &&
+          val.boughtDay.getMonth() === tmpObj.date.getMonth() &&
+          val.boughtDay.getFullYear() === tmpObj.date.getFullYear()
+        ) {
+          tmpObj.products = [val, ...tmpObj.products];
+          return null;
+        }
+        const dayObj = tmpObj;
+        tmpObj = { date: val.boughtDay, id: count, products: [val] };
+        count += 1;
+        return dayObj;
+      });
     productsEachDay.push(tmpObj);
-    productsEachDay.pop();
-    return productsEachDay;
+    const result = productsEachDay.filter((val) => val !== null);
+    return result;
   }
 
   // 期間を指定して取得するメソッド

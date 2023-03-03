@@ -18,5 +18,4 @@ export const useQueryProducts = (month: number = new Date().getMonth() + 1) =>
     onError: (error) => {
       console.log(error);
     },
-    staleTime: 1000 * 60 * 60 * 24,
   });

@@ -22,19 +22,19 @@ export class ProductsService {
       },
     });
     let productsEachDay = [];
-    let prevDay = 0;
-    let tmpObj = { day: 0, products: [] };
+    let prevDate = new Date();
+    let tmpObj = { date: prevDate, products: [] };
 
     products.forEach((e) => {
-      const day = e.boughtDay.getDate();
-      if (day !== prevDay) {
+      const date = e.boughtDay;
+      if (date !== prevDate) {
         // 日付が変わったら配列にオブジェクトを追加してtmpObjを初期化
         productsEachDay = [tmpObj, ...productsEachDay];
-        tmpObj = { day, products: [] };
+        tmpObj = { date, products: [] };
       }
       // console.log(e);
       tmpObj.products = [e, ...tmpObj.products];
-      prevDay = day;
+      prevDate = date;
     });
     productsEachDay = [tmpObj, ...productsEachDay];
     productsEachDay = productsEachDay.slice(0, -1);

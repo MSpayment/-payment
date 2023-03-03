@@ -10,7 +10,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors({
     credentials: true,
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://192.168.10.102:3000/"],
   });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
@@ -19,7 +19,7 @@ async function bootstrap() {
       cookie: {
         httpOnly: true, // javascriptから読み込めない
         sameSite: "none",
-        secure: true, // デバッグ用にfaulse//cookieをHTTPSのみで使用するかどうか
+        secure: false, // デバッグ用にfaulse//cookieをHTTPSのみで使用するかどうか
       },
       value: (req: Request) =>
         // value: 検証のため呼び出されるリクエストからトークンを読み取る関数

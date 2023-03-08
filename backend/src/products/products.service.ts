@@ -24,6 +24,7 @@ export class ProductsService {
       },
     });
 
+    if (!products[0]) return [];
     let count = 0;
     let tmpObj: { date: Date; id: number; products: Product[] } | null;
     const productsEachDay: { date: Date; id: number; products: Product[] }[] =

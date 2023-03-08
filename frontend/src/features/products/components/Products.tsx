@@ -2,7 +2,7 @@ import { Modal } from "@mantine/core";
 import React, { FC } from "react";
 import { ModalContent } from "src/components/ModalContent";
 import { useQueryProducts } from "src/features/products/api/useQueryProducts";
-import { ProductsItem } from "src/features/products/components/ProductsItem";
+import { ProductList } from "src/features/products/components/ProductList";
 import { useGlobalState } from "src/store/input";
 
 export const Products: FC = () => {
@@ -26,8 +26,8 @@ export const Products: FC = () => {
         <ModalContent />
       </Modal>
       <ul className="p-6">
-        {data?.map((product) => (
-          <ProductsItem key={product.id} product={product} />
+        {data?.map((productList) => (
+          <ProductList productList={productList} key={productList.id} />
         ))}
       </ul>
     </>

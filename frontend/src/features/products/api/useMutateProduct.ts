@@ -18,10 +18,7 @@ export const useMutateProduct = () => {
     onSuccess: (data) => {
       const { boughtDay } = data;
       const month = new Date(boughtDay).getMonth() + 1;
-      const prevData = query.getQueryData<Product[]>(["products", month]);
-      if (prevData) {
-        query.setQueryData(["products", month], [...prevData, data]);
-      }
+      query.invalidateQueries({ queryKey: ["products", month] });
     },
   });
 

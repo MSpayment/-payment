@@ -1,7 +1,6 @@
 import { Badge, Checkbox, Text } from "@mantine/core";
 import { Product } from "@prisma/client";
 import React, { FC } from "react";
-import { format } from "date-fns";
 import { useMutateProduct } from "src/features/products/api/useMutateProduct";
 
 type Props = {
@@ -32,34 +31,34 @@ export const ProductsItem: FC<Props> = ({ product }) => {
   };
 
   return (
-    <li className="border-0 border-b border-solid border-slate-200 py-4">
-      <Text className="sticky top-0 bg-white">
-        {format(new Date(product.boughtDay), "yyyy年MM月dd日")}
-      </Text>
-      <ul className="mt-2">
-        <li className="flex justify-center space-x-4">
-          <div className="flex flex-1">
-            <div className="flex flex-[2] space-x-2">
-              <Badge
-                color={product.boughtSite === "メルカリ" ? "red" : "blue"}
-                className="my-1 min-w-max"
-              >
-                {product.boughtSite}
-              </Badge>
-              <div>{product.name}</div>
-            </div>
-            <div className="flex-1 text-right">{`${product.price}円`}</div>
-          </div>
-          <div className="flex justify-center space-x-4">
-            <Checkbox onChange={handleIsPaidChange} checked={product.isPaid} />
-            <Checkbox
-              onChange={deleteProductHandler}
-              color="red"
-              checked={product.deleted}
-            />
-          </div>
-        </li>
-      </ul>
+    <li className="flex w-full flex-col">
+      <Badge
+        size="xs"
+        className="mb-3 max-w-max"
+        color={product.boughtSite === "メルカリ" ? "red" : "blue"}
+      >
+        {product.boughtSite}
+      </Badge>
+
+      <div className="flex gap-2">
+        <Text
+          component="p"
+          className="flex-1 overflow-hidden break-words text-sm"
+        >
+          {product.name}
+        </Text>
+        <Text component="p" className="w-24 text-right text-sm">
+          {product.price.toLocaleString()}円
+        </Text>
+        <div className="flex justify-center space-x-2">
+          <Checkbox onChange={handleIsPaidChange} checked={product.isPaid} />
+          <Checkbox
+            onChange={deleteProductHandler}
+            color="red"
+            checked={product.deleted}
+          />
+        </div>
+      </div>
     </li>
   );
 };

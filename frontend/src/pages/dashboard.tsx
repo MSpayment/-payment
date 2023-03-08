@@ -48,6 +48,5 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       dehydratedState: dehydrate(client),
     },
-    revalidate: 1,
   };
 };

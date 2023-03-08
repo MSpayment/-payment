@@ -128,4 +128,10 @@ export class AuthController {
     this.authService.clearRefreshToken(req.user.id);
     return { message: "ok" };
   }
+
+  @UseGuards(AuthGuard("jwt-access"))
+  @Get()
+  auth_check() {
+    return "ok";
+  }
 }

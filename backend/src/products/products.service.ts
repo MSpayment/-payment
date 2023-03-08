@@ -95,7 +95,7 @@ export class ProductsService {
     return result;
   }
 
-  // // (idを指定して?）削除するメソッド
+  // (idを指定して?）削除するメソッド
   deleteProduct(productId: number) {
     const product = this.prisma.product.update({
       data: {

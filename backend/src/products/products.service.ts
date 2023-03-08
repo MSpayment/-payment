@@ -108,6 +108,16 @@ export class ProductsService {
     return product;
   }
 
+  // まとめて削除
+  async deleteProducts() {
+    const result = await this.prisma.product.deleteMany({
+      where: {
+        deleted: true,
+      },
+    });
+    return result;
+  }
+
   getTodayMonth(): { month: number; year: number } {
     const date = new Date();
     const year = date.getFullYear();

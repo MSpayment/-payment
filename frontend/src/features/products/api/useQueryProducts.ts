@@ -14,17 +14,8 @@ const getProducts = async ({ month, year }: Args) => {
   return data;
 };
 
-export const useQueryProducts = (
-  month: number = new Date().getMonth() + 1,
-  year: number = new Date().getFullYear()
-) =>
+export const useQueryProducts = (year: number, month: number) =>
   useQuery<GetProduct[], Error>({
     queryKey: ["products", year, month],
     queryFn: () => getProducts({ month, year }),
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
   });

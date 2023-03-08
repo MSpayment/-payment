@@ -5,7 +5,7 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/solid";
 import { GetStaticProps, NextPage } from "next";
-import React from "react";
+import React, { Suspense } from "react";
 import { useGlobalState } from "src/store/input";
 import { Products } from "src/features/products/components/Products";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -44,7 +44,9 @@ const Dashboard: NextPage = () => {
       </header>
       <main className="min-h-screen">
         <div className="container mx-auto h-full min-h-screen ">
-          <Products />
+          <Suspense fallback={<div>loading</div>}>
+            <Products />
+          </Suspense>
         </div>
       </main>
       <ActionIcon

@@ -28,25 +28,10 @@ export const useMutateProduct = () => {
 
       return data;
     },
-    onMutate: async (newData) => {
-      const { id, product } = newData;
-      const month = new Date(product.boughtDay).getMonth() + 1;
-      await query.cancelQueries({ queryKey: ["products", month] });
-      const prevData = query.getQueryData<Product[]>(["products", month]);
-      if (prevData) {
-        const updatedData = prevData.map((prevProduct) => {
-          if (prevProduct.id === id) {
-            return {
-              ...prevProduct,
-              isPaid: product.isPaid,
-            };
-          }
-
-          return prevProduct;
-        });
-
-        query.setQueryData(["products", month], updatedData);
-      }
+    onSuccess: (data) => {
+      const { boughtDay } = data;
+      const month = new Date(boughtDay).getMonth() + 1;
+      query.invalidateQueries({ queryKey: ["products", month] });
     },
   });
 
@@ -56,25 +41,10 @@ export const useMutateProduct = () => {
 
       return data;
     },
-    onMutate: async (newData) => {
-      const { id, boughtDay } = newData;
+    onSuccess: (data) => {
+      const { boughtDay } = data;
       const month = new Date(boughtDay).getMonth() + 1;
-      await query.cancelQueries({ queryKey: ["products", month] });
-      const prevData = query.getQueryData<Product[]>(["products", month]);
-      if (prevData) {
-        const updatedData = prevData.map((prevProduct) => {
-          if (prevProduct.id === id) {
-            return {
-              ...prevProduct,
-              deleted: true,
-            };
-          }
-
-          return prevProduct;
-        });
-
-        query.setQueryData(["products", month], updatedData);
-      }
+      query.invalidateQueries({ queryKey: ["products", month] });
     },
   });
 

@@ -3,6 +3,7 @@ import React, { FC } from "react";
 import { ModalContent } from "src/components/ModalContent";
 import { useQueryProducts } from "src/features/products/api/useQueryProducts";
 import { ProductList } from "src/features/products/components/ProductList";
+
 import { useGlobalState } from "src/store/input";
 
 export const Products: FC = () => {

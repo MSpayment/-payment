@@ -1,4 +1,4 @@
-import { Badge, Checkbox, Text } from "@mantine/core";
+import { Badge, Checkbox, Loader, Text } from "@mantine/core";
 import { Product } from "@prisma/client";
 import React, { FC } from "react";
 import { useMutateProduct } from "src/features/products/api/useMutateProduct";
@@ -51,12 +51,20 @@ export const ProductsItem: FC<Props> = ({ product }) => {
           {product.price.toLocaleString()}円
         </Text>
         <div className="flex justify-center space-x-2">
-          <Checkbox onChange={handleIsPaidChange} checked={product.isPaid} />
-          <Checkbox
-            onChange={deleteProductHandler}
-            color="red"
-            checked={product.deleted}
-          />
+          {updateProductMutation.isLoading ? (
+            <Loader size="xs" />
+          ) : (
+            <Checkbox onChange={handleIsPaidChange} checked={product.isPaid} />
+          )}
+          {deleteProductMutation.isLoading ? (
+            <Loader size="xs" color="red" />
+          ) : (
+            <Checkbox
+              onChange={deleteProductHandler}
+              color="red"
+              checked={product.deleted}
+            />
+          )}
         </div>
       </div>
     </li>

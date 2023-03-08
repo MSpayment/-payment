@@ -33,7 +33,7 @@ export class ProductsController {
     @Param("month", ParseIntPipe) month: number,
     @Param("year", ParseIntPipe) year: number
   ) {
-    return this.productsService.getProducts({ month, year });
+    return this.productsService.getProducts({ month: month - 1, year });
   }
 
   // Get 期間を指定して登録した製品を取得

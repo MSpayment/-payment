@@ -1,5 +1,9 @@
-import { ActionIcon } from "@mantine/core";
-import { PlusIcon } from "@heroicons/react/24/solid";
+import { ActionIcon, Text } from "@mantine/core";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  PlusIcon,
+} from "@heroicons/react/24/solid";
 import { GetStaticProps, NextPage } from "next";
 import React from "react";
 import { useGlobalState } from "src/store/input";
@@ -7,19 +11,44 @@ import { Products } from "src/features/products/components/Products";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { Product } from "@prisma/client";
 import axios from "src/libs/axios";
+import { useSelectDateState } from "src/features/products/store";
 
 const Dashboard: NextPage = () => {
   const setModal = useGlobalState((state) => state.setModal);
+  const increaseMonth = useSelectDateState((state) => state.increaseMonth);
+  const decreaseMonth = useSelectDateState((state) => state.decreaseMonth);
+  const selectDate = useSelectDateState((state) => state.date);
 
   return (
     <div>
+      <header className="h-16 w-full border-0 border-b border-solid border-slate-200 bg-white">
+        <nav className="container mx-auto flex h-full w-full items-center justify-between px-4">
+          <ActionIcon
+            variant="transparent"
+            size="xl"
+            color="blue"
+            onClick={decreaseMonth}
+          >
+            <ArrowLeftIcon className="h-6 w-6" />
+          </ActionIcon>
+          <Text className="mx-auto text-2xl font-bold text-blue-500">{`${selectDate.year}年${selectDate.month}月`}</Text>
+          <ActionIcon
+            size="xl"
+            variant="transparent"
+            color="blue"
+            onClick={increaseMonth}
+          >
+            <ArrowRightIcon className="h-6 w-6" />
+          </ActionIcon>
+        </nav>
+      </header>
       <main className="min-h-screen">
         <div className="container mx-auto h-full min-h-screen ">
           <Products />
         </div>
       </main>
       <ActionIcon
-        className="fixed bottom-10 right-10 shadow-md"
+        className="fixed bottom-10 right-10 z-[50] shadow-md"
         variant="filled"
         size="xl"
         radius="xl"
@@ -38,11 +67,14 @@ export const getStaticProps: GetStaticProps = async () => {
   const client = new QueryClient();
   const today = new Date();
 
-  await client.prefetchQuery(["products", today.getMonth() + 1], async () => {
-    const { data } = await axios.get<Product[]>("/products");
+  await client.prefetchQuery(
+    ["products", today.getFullYear(), today.getMonth() + 1],
+    async () => {
+      const { data } = await axios.get<Product[]>("/products");
 
-    return data;
-  });
+      return data;
+    }
+  );
 
   return {
     props: {

@@ -18,7 +18,8 @@ export const useMutateProduct = () => {
     onSuccess: (data) => {
       const { boughtDay } = data;
       const month = new Date(boughtDay).getMonth() + 1;
-      query.invalidateQueries({ queryKey: ["products", month] });
+      const year = new Date(boughtDay).getFullYear();
+      query.invalidateQueries({ queryKey: ["products", year, month] });
     },
   });
 
@@ -31,7 +32,9 @@ export const useMutateProduct = () => {
     onSuccess: (data) => {
       const { boughtDay } = data;
       const month = new Date(boughtDay).getMonth() + 1;
-      query.invalidateQueries({ queryKey: ["products", month] });
+      const year = new Date(boughtDay).getFullYear();
+
+      query.invalidateQueries({ queryKey: ["products", year, month] });
     },
   });
 
@@ -44,7 +47,8 @@ export const useMutateProduct = () => {
     onSuccess: (data) => {
       const { boughtDay } = data;
       const month = new Date(boughtDay).getMonth() + 1;
-      query.invalidateQueries({ queryKey: ["products", month] });
+      const year = new Date(boughtDay).getFullYear();
+      query.invalidateQueries({ queryKey: ["products", year, month] });
     },
   });
 

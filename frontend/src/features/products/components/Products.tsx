@@ -26,9 +26,9 @@ export const Products: FC = () => {
       >
         <ModalContent />
       </Modal>
-      <ul className="p-6">
+      <ul className="p-4">
         {data?.map((productList) => (
-          <ProductList productList={productList} key={productList.id} />
+          <ProductList productList={productList} key={productList?.id} />
         ))}
       </ul>
     </>
